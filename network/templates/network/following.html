@@ -6,7 +6,7 @@
         {% if posts %}
             {% for post in posts %}
                 <div class="posts">
-                    <h3>{{ post.posted_by.username }}</h3>
+                    <h3><a href="{% url 'profile' post.posted_by.username %}" class="profilelink">{{ post.posted_by.username }}</a></h3>
                     <p><a href="#">Edit</a></p>
                     {{ post.text }}<br>
                     <span class="greytext">{{ post.timestamp }}</span><br>

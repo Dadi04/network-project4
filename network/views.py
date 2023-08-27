@@ -120,6 +120,23 @@ def follow(request, username):
         # redirect back to the same page
         return redirect(request.META.get('HTTP_REFERER', 'network/index.html'))
 
+@login_required
+def unfollow(request, username):
+    if request.method == "POST":
+        # get the info of the account i want to follow and give me it's list
+        user = User.objects.get(username=username)
+        # get a new follower's account
+        new_follower = User.objects.get(username=request.user.username)
+
+        # append follower to the user he is trying to follow
+        user.followers.remove(new_follower.username)
+        user.save()
+        # append his account to following on my account
+        new_follower.following.remove(user.username)
+        new_follower.save()
+        # redirect back to the same page
+        return redirect(request.META.get('HTTP_REFERER', 'network/index.html'))
+
 @login_required 
 def following(request):
     # get the list of id of the people i follow
