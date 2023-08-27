@@ -1,15 +1,16 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 from .models import User, NewPost
 
 
 def index(request):
     return render(request, "network/index.html", {
-        "posts": NewPost.objects.all()
+        "posts": NewPost.objects.all().order_by('-timestamp')
     })
 
 
@@ -63,12 +64,57 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
-
+    
+@login_required
 def newpost(request):
     if request.method == "POST":
         text = request.POST['new_post']
         new_post = NewPost.objects.create(posted_by=request.user, text=text)
         new_post.save()
         return render(request, "network/index.html", {
-            "posts": NewPost.objects.all()
+            "posts": NewPost.objects.all().order_by('-timestamp')
         })
+    
+@login_required    
+def profile(request, username):
+    # if user's profile i am trying to connect to is mine, don't show any button
+    if username == request.user.username:
+        follow = False
+        followed = False
+    # if not
+    else: 
+        # check if my name is in the follows list and if it is, turn on followed button
+        if request.user.username in User.objects.get(username=username).followers:
+            followed = True
+            follow = False
+        # if not
+        else:
+            # turn on follow button
+            followed = False
+            follow = True
+
+    return render(request, "network/profile.html", {
+        "user": request.user,
+        "user_profile": User.objects.get(username=username),
+        "posts": NewPost.objects.filter(posted_by=User.objects.get(username=username)).order_by('-timestamp'),
+        "follow": follow,
+        "followed": followed,
+    })
+
+@login_required 
+def follow(request, username):
+    if request.method == "POST":
+        # get the info of the account i want to follow and give me it's list
+        user = User.objects.get(username=username)
+        # get a new follower's account
+        new_follower = User.objects.get(username=request.user.username)
+
+        # append follower to the user he is trying to follow
+        user.followers.append(new_follower.username)
+        user.save()
+        # append his account to following on my account
+        new_follower.following.append(user.username)
+        new_follower.save()
+        # redirect back to the same page
+        return redirect(request.META.get('HTTP_REFERER', 'network/index.html'))
+

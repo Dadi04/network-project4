@@ -3,8 +3,8 @@ from django.db import models
 from django.utils import timezone
 
 class User(AbstractUser):
-    follows = models.IntegerField(default=0)
-    followers = models.IntegerField(default=0)
+    followers = models.JSONField(default=list)
+    following = models.JSONField(default=list)
 
 class NewPost(models.Model):
     posted_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')

@@ -1,0 +1,36 @@
+{% extends "network/layout.html" %}
+
+{% block title %}
+    Profile info
+{% endblock %}
+
+{% block body %}
+    <div id="profile">
+        {% if follow and not followed %}
+            <form action="{% url 'follow' user_profile.username %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Follow" class="btn btn-primary follow">
+            </form>
+        {% elif followed and not follow %}
+            <button class="btn btn-primary follow" disabled>Following</button>
+        {% endif %}
+        <h1>{{ user_profile.username|capfirst }}'s profile</h1>
+        Followers : {{ user_profile.followers|length  }} <br>
+        Following : {{ user_profile.following|length  }} <br>
+        <h3>Posts</h3>
+        {% if posts %}
+            {% for post in posts %}
+                <div class="posts">
+                    <h3>{{ user_profile.username }}</h3>
+                    <p><a href="#">Edit</a></p>
+                    {{ post.text }}<br>
+                    <span class="greytext">{{ post.timestamp }}</span><br>
+                    <a href="#" class="greylink">❤️ {{ post.likes }}</a><br>
+                    <a href="#" class="greylink">Comment</a>
+                </div><br>
+            {% endfor %}
+        {% else %}
+            {{ user_profile.username }} haven't posted anything yet!
+        {% endif %}
+    </div>
+{% endblock %}
