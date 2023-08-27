@@ -75,6 +75,8 @@ def newpost(request):
             "posts": NewPost.objects.all().order_by('-timestamp')
         })
     
+
+# do unfollow logic (probably complicated)    
 @login_required    
 def profile(request, username):
     # if user's profile i am trying to connect to is mine, don't show any button
@@ -118,3 +120,11 @@ def follow(request, username):
         # redirect back to the same page
         return redirect(request.META.get('HTTP_REFERER', 'network/index.html'))
 
+@login_required 
+def following(request):
+    # get the list of id of the people i follow
+    following = User.objects.filter(username__in=request.user.following).values_list('id', flat=True)
+    # get the people i follow using id's
+    return render(request, "network/following.html", {
+        "posts": NewPost.objects.filter(posted_by__in=following).order_by('-timestamp')
+    })

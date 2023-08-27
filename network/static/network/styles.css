@@ -18,6 +18,16 @@
     color: gray;
 }
 
+.profilelink {
+    text-decoration: none;
+    color: black;
+}
+
+.profilelink:hover {
+    text-decoration: none;
+    color: black;
+}
+
 #profile {
     width: 800px;
     height: auto;

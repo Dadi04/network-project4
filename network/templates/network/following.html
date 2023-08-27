@@ -2,19 +2,11 @@
 
 {% block body %}
     <div id="main">
-        <h1>All posts</h1>
-        <div id="new_post">
-            <form action="{% url 'newpost' %}" method="post">
-                {% csrf_token %}
-                <h3>New Post</h3>
-                <textarea name="new_post" cols="220" rows="4"></textarea><br>
-                <input type="submit" value="Post" class="btn btn-primary">  
-            </form>
-        </div><br>
+        <h1>All following's posts</h1>
         {% if posts %}
             {% for post in posts %}
                 <div class="posts">
-                    <h3><a href="{% url 'profile' post.posted_by.username %}" class="profilelink">{{ post.posted_by.username }}</a></h3>
+                    <h3>{{ post.posted_by.username }}</h3>
                     <p><a href="#">Edit</a></p>
                     {{ post.text }}<br>
                     <span class="greytext">{{ post.timestamp }}</span><br>
