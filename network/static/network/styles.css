@@ -1,0 +1,19 @@
+#main {
+    padding: 10px 20px 0 20px;
+}
+
+.posts, #new_post {
+    padding: 10px;
+    border: 1px solid;
+    border-radius: 5px;
+}
+
+.greytext, .greylink {
+    color: gray;
+    text-decoration: none;
+}
+
+.greylink:hover {
+    text-decoration: none;
+    color: gray;
+}
