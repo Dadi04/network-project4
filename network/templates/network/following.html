@@ -8,9 +8,9 @@
                 <div class="posts">
                     <h3><a href="{% url 'profile' post.posted_by.username %}" class="profilelink">{{ post.posted_by.username }}</a></h3>
                     {% if user.username == post.posted_by.username %}
-                        <p><a href="#">Edit</a></p>
+                        <p id="edit_post">Edit</p>
                     {% endif %}
-                    {{ post.text }}<br>
+                    <p class="text">{{ post.text }}</p>
                     <span class="greytext">{{ post.timestamp }}</span><br>
                     <a href="#" class="greylink">❤️ {{ post.likes }}</a><br>
                     <a href="#" class="greylink">Comment</a>

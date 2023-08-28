@@ -25,8 +25,10 @@
             {% for post in posts %}
                 <div class="posts">
                     <h3>{{ user_profile.username }}</h3>
-                    <p><a href="#">Edit</a></p>
-                    {{ post.text }}<br>
+                    {% if user.username == post.posted_by.username %}
+                        <p id="edit_post">Edit</p>
+                    {% endif %}
+                    <p class="text">{{ post.text }}</p>
                     <span class="greytext">{{ post.timestamp }}</span><br>
                     <a href="#" class="greylink">❤️ {{ post.likes }}</a><br>
                     <a href="#" class="greylink">Comment</a>

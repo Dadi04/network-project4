@@ -8,13 +8,22 @@ from django.core.paginator import Paginator
 
 from .models import User, NewPost
 
+def paginator(request, mode, username):
+    page_number = request.GET.get('page')
+    if mode == 'all':
+        posts = NewPost.objects.all().order_by('-timestamp')
+    elif mode == 'profile':
+        posts = NewPost.objects.filter(posted_by=User.objects.get(username=username)).order_by('-timestamp')
+    elif mode == 'following':
+        # get the list of id of the people i follow
+        following = User.objects.filter(username__in=request.user.following).values_list('id', flat=True)
+        posts = NewPost.objects.filter(posted_by__in=following).order_by('-timestamp')
+    paginator = Paginator(posts, 10)
+    page_obj = paginator.get_page(page_number)
+    return page_obj
 
 def index(request):
-    all_posts = NewPost.objects.all().order_by('-timestamp')
-    paginator = Paginator(all_posts, 10)
-
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginator(request, 'all', 'nothing')
     return render(request, "network/index.html", {
         "posts": page_obj
     })
@@ -74,13 +83,11 @@ def newpost(request):
         text = request.POST['new_post']
         new_post = NewPost.objects.create(posted_by=request.user, text=text)
         new_post.save()
-        return render(request, "network/index.html", {
-            "posts": NewPost.objects.all().order_by('-timestamp')
-        })
+        return HttpResponseRedirect(reverse("index"))
 
-# do unfollow logic (probably complicated)    
 @login_required    
 def profile(request, username):
+    page_obj = paginator(request, 'profile', username)
     # if user's profile i am trying to connect to is mine, don't show any button
     if username == request.user.username:
         follow = False
@@ -100,7 +107,7 @@ def profile(request, username):
     return render(request, "network/profile.html", {
         "user": request.user,
         "user_profile": User.objects.get(username=username),
-        "posts": NewPost.objects.filter(posted_by=User.objects.get(username=username)).order_by('-timestamp'),
+        "posts": page_obj,
         "follow": follow,
         "followed": followed,
     })
@@ -141,10 +148,9 @@ def unfollow(request, username):
 
 @login_required 
 def following(request):
-    # get the list of id of the people i follow
-    following = User.objects.filter(username__in=request.user.following).values_list('id', flat=True)
+    page_obj = paginator(request, 'following', 'nothing')
     # get the people i follow using id's
     return render(request, "network/following.html", {
-        "posts": NewPost.objects.filter(posted_by__in=following).order_by('-timestamp')
+        "posts": page_obj
     })
 
