@@ -3,14 +3,17 @@
 {% block body %}
     <div id="main">
         <h1>All posts</h1>
-        <div id="new_post">
-            <form action="{% url 'newpost' %}" method="post">
-                {% csrf_token %}
-                <h3>New Post</h3>
-                <textarea name="new_post" cols="220" rows="4"></textarea><br>
-                <input type="submit" value="Post" class="btn btn-primary">  
-            </form>
-        </div><br>
+        {% if not posts.number > 1 %}
+            <div id="new_post">
+                <form action="{% url 'newpost' %}" method="post">
+                    {% csrf_token %}
+                    <h3>New Post</h3>
+                    <textarea name="new_post" cols="220" rows="4"></textarea><br>
+                    <input type="submit" value="Post" class="btn btn-primary">  
+                </form>
+            </div>
+        {% endif %}
+        <br>
         {% if posts %}
             {% for post in posts %}
                 <div class="posts">
@@ -25,5 +28,22 @@
                 </div><br>
             {% endfor %}
         {% endif %}
+    </div>
+    <div class="pagination">
+        <span class="step-links">
+            {% if posts.has_previous %}
+                <a href="?page=1">&laquo; First page</a> |
+                <a href="?page={{ posts.previous_page_number }}">Previus page</a>
+            {% endif %}
+    
+            <span class="current">
+                Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
+            </span>
+    
+            {% if posts.has_next %}
+                <a href="?page={{ posts.next_page_number }}">Next page</a> |
+                <a href="?page={{ posts.paginator.num_pages }}">Last page &raquo;</a>
+            {% endif %}
+        </span>
     </div>
 {% endblock %}
