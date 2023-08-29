@@ -25,9 +25,7 @@
             {% for post in posts %}
                 <div class="posts">
                     <h3><a class="profilelink" data-id="{{ post.id }}">{{ post.posted_by.username }}</a></h3>
-                    {% if user.username == post.posted_by.username %}
-                        <p class="edit_button" id="edit_post_{{ post.id }}">Edit</p>
-                    {% endif %}
+                    <p class="edit_button" id="edit_post_{{ post.id }}" data-id="{{ post.id }}">Edit</p>
                     <p id="text_{{ post.id }}">{{ post.text }}</p>
                     <textarea class="edit_text" id="textarea_{{ post.id }}" cols="98" rows="4">{{ post.text }}</textarea>
                     <button class="submit btn btn-primary" id="submit_{{ post.id }}">Submit</button>

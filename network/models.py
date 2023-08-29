@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
-from datetime import datetime
+from django.utils import timezone
 
 class User(AbstractUser):
     followers = models.JSONField(default=list)
@@ -10,5 +9,5 @@ class User(AbstractUser):
 class NewPost(models.Model):
     posted_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user')
     text = models.CharField(max_length=1000)
-    timestamp = models.DateTimeField(default=datetime.now())
+    timestamp = models.DateTimeField(default=timezone.now())
     likes = models.IntegerField(default=0)

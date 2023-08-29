@@ -5,8 +5,8 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.utils import timezone
 
-from datetime import datetime
 import json
 from .models import User, NewPost
 
@@ -162,7 +162,7 @@ def edit(request, post_id):
         data = json.loads(request.body)
         post = NewPost.objects.get(pk=post_id)
         post.text = data["text"]
-        post.timestamp = datetime.now()
+        post.timestamp = timezone.now()
         print(f"Post text is: {post.text}, it is edited on: {post.timestamp}")
         post.save()
         return JsonResponse({"message": "Change successful", "data": data["text"]})
