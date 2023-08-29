@@ -42,6 +42,14 @@
     margin: 15px;
 }
 
-#edit_post {
+.edit_button {
     color: blue;
+}
+
+.edit_text {
+    display: none;
+}
+
+.submit {
+    display: none;
 }

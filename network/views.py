@@ -1,23 +1,26 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 
+from datetime import datetime
+import json
 from .models import User, NewPost
 
 def paginator(request, mode, username):
     page_number = request.GET.get('page')
     if mode == 'all':
         posts = NewPost.objects.all().order_by('-timestamp')
-    elif mode == 'profile':
-        posts = NewPost.objects.filter(posted_by=User.objects.get(username=username)).order_by('-timestamp')
     elif mode == 'following':
         # get the list of id of the people i follow
         following = User.objects.filter(username__in=request.user.following).values_list('id', flat=True)
         posts = NewPost.objects.filter(posted_by__in=following).order_by('-timestamp')
+    elif mode == 'profile':
+        posts = NewPost.objects.filter(posted_by=User.objects.get(username=username)).order_by('-timestamp')
+    
     paginator = Paginator(posts, 10)
     page_obj = paginator.get_page(page_number)
     return page_obj
@@ -154,3 +157,14 @@ def following(request):
         "posts": page_obj
     })
 
+def edit(request, post_id):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        post = NewPost.objects.get(pk=post_id)
+        post.text = data["text"]
+        post.timestamp = datetime.now()
+        print(f"Post text is: {post.text}, it is edited on: {post.timestamp}")
+        post.save()
+        return JsonResponse({"message": "Change successful", "data": data["text"]})
+    else:
+        return JsonResponse({"error": "POST request required."}, status=400)
