@@ -163,8 +163,17 @@ def edit(request, post_id):
         post = NewPost.objects.get(pk=post_id)
         post.text = data["text"]
         post.timestamp = timezone.now()
-        print(f"Post text is: {post.text}, it is edited on: {post.timestamp}")
         post.save()
         return JsonResponse({"message": "Change successful", "data": data["text"]})
+    else:
+        return JsonResponse({"error": "POST request required."}, status=400)
+    
+def like(request, post_id):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        post = NewPost.objects.get(pk=post_id)
+        post.likes = data["likes"]
+        post.save()
+        return JsonResponse({"message": "Change successful", "likes": data["likes"]})
     else:
         return JsonResponse({"error": "POST request required."}, status=400)

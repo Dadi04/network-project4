@@ -25,8 +25,11 @@
                     <textarea class="edit_text" id="textarea_{{ post.id }}" cols="220" rows="4">{{ post.text }}</textarea>
                     <button class="submit btn btn-primary" id="submit_{{ post.id }}">Submit</button>
                     <span class="greytext">{{ post.timestamp }}</span><br>
-                    <a href="#" class="greylink">❤️ {{ post.likes }}</a><br>
-                    <a href="#" class="greylink">Comment</a>
+                    <div class="like_div">
+                        <span>❤️</span>
+                        <button class="like_button" data-id="{{ post.id }}">{{ post.likes }}</button>
+                    </div>
+                    <p class="greytext">Comment</p>
                 </div><br>
             {% endfor %}
         {% endif %}

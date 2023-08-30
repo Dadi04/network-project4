@@ -9,8 +9,11 @@
                     <h3><a class="profilelink" href="{% url 'profile' post.posted_by.username %}">{{ post.posted_by.username }}</a></h3>
                     <p>{{ post.text }}</p>
                     <span class="greytext">{{ post.timestamp }}</span><br>
-                    <a href="#" class="greylink">❤️ {{ post.likes }}</a><br>
-                    <a href="#" class="greylink">Comment</a>
+                    <div class="like_div">
+                        <span>❤️</span>
+                        <button class="like_button" data-id="{{ post.id }}">{{ post.likes }}</button>
+                    </div>
+                    <p class="greytext">Comment</p>
                 </div><br>
             {% endfor %}
         {% endif %}

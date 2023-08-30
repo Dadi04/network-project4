@@ -8,14 +8,9 @@
     border-radius: 5px;
 }
 
-.greytext, .greylink {
+.greytext{
     color: gray;
     text-decoration: none;
-}
-
-.greylink:hover {
-    text-decoration: none;
-    color: gray;
 }
 
 .profilelink {
@@ -52,4 +47,11 @@
 
 .submit {
     display: none;
+}
+
+.like_div button {
+    display: inline;
+    color: gray;
+    border: 0;
+    background-color: white;
 }
