@@ -3,7 +3,7 @@
 {% block body %}
     <div id="main">
         <h1>All posts</h1>
-        {% if not posts.number > 1 %}
+        {% if user.is_authenticated %}
             <div id="new_post">
                 <form action="{% url 'newpost' %}" method="post">
                     {% csrf_token %}
@@ -27,11 +27,32 @@
                     <span class="greytext">{{ post.timestamp }}</span><br>
                     <div class="like_div">
                         <span>❤️</span>
-                        <button class="like_button" data-id="{{ post.id }}">{{ post.likes }}</button>
+                        {% if user.is_authenticated %}
+                            <button class="like_button" data-id="{{ post.id }}" id="like_button_{{ post.id }}">{{ post.likes.count }}</button>
+                        {% else %}
+                            <button class="like_button" data-id="{{ post.id }}" id="like_button_{{ post.id }}" disabled>{{ post.likes.count }}</button>
+                        {% endif %}
                     </div>
                     <p class="greytext">Comment</p>
                 </div><br>
             {% endfor %}
+            <div class="pagination">
+                <span class="step-links">
+                    {% if posts.has_previous %}
+                        <a href="?page=1">&laquo; First page</a> |
+                        <a href="?page={{ posts.previous_page_number }}">Previus page</a>
+                    {% endif %}
+            
+                    <span class="current">
+                        Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
+                    </span>
+            
+                    {% if posts.has_next %}
+                        <a href="?page={{ posts.next_page_number }}">Next page</a> |
+                        <a href="?page={{ posts.paginator.num_pages }}">Last page &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
         {% endif %}
     </div>
 {% endblock %}

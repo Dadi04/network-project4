@@ -16,6 +16,23 @@
                     <p class="greytext">Comment</p>
                 </div><br>
             {% endfor %}
+            <div class="pagination">
+                <span class="step-links">
+                    {% if posts.has_previous %}
+                        <a href="?page=1">&laquo; First page</a> |
+                        <a href="?page={{ posts.previous_page_number }}">Previus page</a>
+                    {% endif %}
+            
+                    <span class="current">
+                        Page {{ posts.number }} of {{ posts.paginator.num_pages }}.
+                    </span>
+            
+                    {% if posts.has_next %}
+                        <a href="?page={{ posts.next_page_number }}">Next page</a> |
+                        <a href="?page={{ posts.paginator.num_pages }}">Last page &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
         {% endif %}
     </div>
 {% endblock %}

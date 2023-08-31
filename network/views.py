@@ -8,7 +8,7 @@ from django.core.paginator import Paginator
 from django.utils import timezone
 
 import json
-from .models import User, NewPost
+from .models import User, NewPost, Likes
 
 def paginator(request, mode, username):
     page_number = request.GET.get('page')
@@ -86,6 +86,8 @@ def newpost(request):
         text = request.POST['new_post']
         new_post = NewPost.objects.create(posted_by=request.user, text=text)
         new_post.save()
+        likes = Likes.objects.create(liked_by=request.user, post=new_post)
+        likes.save()
         return HttpResponseRedirect(reverse("index"))
 
 @login_required    
@@ -157,6 +159,7 @@ def following(request):
         "posts": page_obj
     })
 
+@login_required   
 def edit(request, post_id):
     if request.method == "POST":
         data = json.loads(request.body)
@@ -167,13 +170,19 @@ def edit(request, post_id):
         return JsonResponse({"message": "Change successful", "data": data["text"]})
     else:
         return JsonResponse({"error": "POST request required."}, status=400)
-    
+
+@login_required    
 def like(request, post_id):
     if request.method == "POST":
-        data = json.loads(request.body)
         post = NewPost.objects.get(pk=post_id)
-        post.likes = data["likes"]
-        post.save()
-        return JsonResponse({"message": "Change successful", "likes": data["likes"]})
+        user = request.user
+        if Likes.objects.filter(liked_by=user, post=post).exists():
+            like = Likes.objects.get(liked_by=user, post=post)
+            like.delete()
+        else:
+            like = Likes(liked_by=user, post=post)
+            like.save()
+        likes_count = post.likes.count()
+        return JsonResponse({"message": "Post liked/unliked", "likes": likes_count})
     else:
         return JsonResponse({"error": "POST request required."}, status=400)
