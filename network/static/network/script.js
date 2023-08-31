@@ -62,19 +62,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 like_button.textContent = likes;
 
                 like_button.classList.add('liked');
+            } else {
+                let likes = parseInt(like_button.textContent);
+                likes = likes - 1;
+                like_button.textContent = likes;
 
-                fetch(`/like/${id}`, {
-                    method: "POST",
-                    headers: {"Content-type": "application/json", "X-CSRFToken": getCookie("csrftoken")},
-                    body: JSON.stringify({
-                        likes: like_button.textContent
-                    })
-                })
-                .then(response => response.json())
-                .catch(error => {
-                    console.error(error);
-                });
+                like_button.classList.remove('liked');
             }
+            fetch(`/like/${id}`, {
+                method: "POST",
+                headers: {"Content-type": "application/json", "X-CSRFToken": getCookie("csrftoken")},
+                body: JSON.stringify({
+                    likes: like_button.textContent
+                })
+            })
+            .then(response => response.json())
+            .catch(error => {
+                console.error(error);
+            });
         });
     });
 });
