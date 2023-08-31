@@ -1,3 +1,4 @@
+from time import sleep
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
@@ -84,10 +85,12 @@ def register(request):
 def newpost(request):
     if request.method == "POST":
         text = request.POST['new_post']
-        new_post = NewPost.objects.create(posted_by=request.user, text=text)
+        new_post = NewPost.objects.create(posted_by=request.user, text=text, timestamp=timezone.now())
+        new_post.likes.set([])
         new_post.save()
-        likes = Likes.objects.create(liked_by=request.user, post=new_post)
-        likes.save()
+
+        sleep(0.1)
+
         return HttpResponseRedirect(reverse("index"))
 
 @login_required    
