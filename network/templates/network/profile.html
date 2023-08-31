@@ -32,7 +32,7 @@
                     <span class="greytext">{{ post.timestamp }}</span><br>
                     <div class="like_div">
                         <span>❤️</span>
-                        <button class="like_button" data-id="{{ post.id }}">{{ post.likes }}</button>
+                        <button class="like_button" data-id="{{ post.id }}" id="like_button_{{ post.id }}">{{ post.likes.count }}</button>
                     </div>
                     <p class="greytext">Comment</p>
                 </div><br>
